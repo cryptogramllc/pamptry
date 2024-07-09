@@ -1,0 +1,29 @@
+service: pamptry-service
+plugins:
+  - serverless-dotenv-plugin
+  
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: prod
+  region: us-east-1
+
+functions:
+  getRemedy:
+    handler: handler.getRemedy
+    role: arn:aws:iam::514188170070:role/aws-nodejs-prod-us-east-1-lambdaRole
+    timeout: 30
+    environment:
+      TABLE_NAME: blog_posts
+      OPENAI_URL: https://api.openai.com/v1/chat/completions
+      OPENAI_API_KEY: ${env:OPENAI_API_KEY}
+      UNSPLASH_ACCESS_KEY: WgwitiB3gelWNKfcMl4UbPGxlnm7ScPg2WktrGiuM04
+      S3_BUCKET: ciphergram.io
+    events:
+      - http:
+          path: get-remedy
+          method: post
+          cors: true
+          request:
+            schema:
+              application/json: ${file(schema.js)}
